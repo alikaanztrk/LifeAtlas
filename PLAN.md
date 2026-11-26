@@ -1,10 +1,10 @@
 # LifeAtlas — Living implementation plan
 
-Status: Phases 0–5 completed locally on 26 November 2026. The owner approved the LifeAtlas name, the MIT license and first publication to [alikaanztrk/LifeAtlas](https://github.com/alikaanztrk/LifeAtlas).
+Status: Phases 0–5 complete. The owner approved the LifeAtlas name and MIT license, and the first release was published on 26 November 2026. [Source repository](https://github.com/alikaanztrk/LifeAtlas) · [Live app](https://alikaanztrk.github.io/LifeAtlas/)
 
 ## Current target
 
-Phase 5 under [the roadmap](docs/07_ROADMAP.md) passed its local gate. The production subpath, install and offline/update behavior, synthetic performance and accessibility checks, release documents, and manual Pages workflow are ready for owner review.
+Phase 5 under [the roadmap](docs/07_ROADMAP.md) passed its local gate. The first release also passed the GitHub checks and production HTTPS smoke test.
 
 ## Progress
 
@@ -103,6 +103,7 @@ Phase 5 under [the roadmap](docs/07_ROADMAP.md) passed its local gate. The produ
 | 26 Nov 2026 | Phase 4 Chrome and export privacy | `npm run test:e2e` and isolated production preview checks with axe | 24 passed in Chrome 158.0.8127.37. Verified month and year recaps, active filtering, keyboard navigation, reduced motion, replay seek and pause, gaps without markers, and online tile suspension during playback. Verified painted text and field redaction, square PNG bytes and portrait preview dimensions, and zero external requests during preview and export. The English desktop story and dialog and Turkish dark mobile story had no scoped axe violations or horizontal overflow. Fullscreen entry and exit worked. Synthetic screenshots were reviewed at 1440×900 and 390×844. |
 | 26 Nov 2026 | Phase 5 install, build and artifact checks | `npm ci`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:artifacts`, `npm audit --audit-level=high`, `actionlint -no-color`, `git check-ignore -- Timeline.json` | Passed. 42 unit and integration tests, no npm vulnerabilities, and workflow syntax passed actionlint 1.7.12. Checked the web app manifest and generated offline asset digests. The build contains 23 files and is about 3.46 MB uncompressed. On the first install attempt, the running previews locked esbuild on Windows. Stopping those previews let `npm ci` succeed. The install-script advisory and Vite chunk/client-directive warnings remain. The private input remains ignored and was not read in Phase 5. |
 | 26 Nov 2026 | Phase 5 Chrome PWA and accessibility | `npm run test:e2e` and isolated Chrome production checks with axe and the installability detector | 26 passed in Chrome 158.0.8127.37. Verified offline import, saved archive reopen and deletion, lazy views on first offline use, asset-only caching, first install retry, integrity rejection, and update activation after two tabs close. The first offline hash navigation failed until the worker normalized the navigation fragment. The initial mobile sweep found two unfocusable scrolling tables. Both now support keyboard scrolling. The final scoped axe sweep found zero violations and zero horizontal page overflow across 10 views at each of three viewport sizes in English and Turkish. The clean regular profile reported zero installability errors. Three synthetic screenshots were reviewed and added to the README. |
+| 26 Nov 2026 | First public release | `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:artifacts`, `npm audit --audit-level=high`, focused offline E2E, GitHub workflows and live Chrome smoke | Local checks passed with 42 unit/integration tests, both focused offline tests and zero npm audit findings. GitHub detected MIT. The reviewed source tree contained 126 files and no private export paths. The live app served HTTPS 200 from commit `d1589db`. The private export path returned 404. In a fresh Chrome session, all 21 cache entries were static files, strict mode made zero outside requests, and the synthetic demo, map and Rewind opened offline. [GitHub checks](https://github.com/alikaanztrk/LifeAtlas/actions/runs/45875092381) · [Pages publication](https://github.com/alikaanztrk/LifeAtlas/actions/runs/45875181884) |
 
 ### Synthetic import benchmark
 
@@ -138,4 +139,4 @@ On the current 50 MiB sample, two first-time single-day filters took 408–462 m
 
 ## Next action
 
-Verify the reviewed source files on GitHub and the production app at the [approved Pages address](https://alikaanztrk.github.io/LifeAtlas/). Use the manual Pages workflow for future authorized releases.
+Use synthetic reproductions for release feedback and the manual Pages workflow for future authorized releases. Any change to the project path needs a new verified build.
