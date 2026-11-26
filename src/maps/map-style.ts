@@ -30,7 +30,7 @@ type Paint = Extract<LayerSpecification, { type: 'fill' }>['paint']
 
 export function styleFor(theme: Theme, tiles?: string): StyleSpecification {
   const dark = theme === 'dark'
-  const background = dark ? '#172e2b' : '#e7eeea'
+  const background = dark ? '#112b35' : '#dbe8eb'
   const colors = { visits: dark ? '#91ebc5' : '#12644f', positions: dark ? '#9dc8f5' : '#3272a1', ends: dark ? '#ffcf8b' : '#865a25' }
   const selected = dark ? '#fff1aa' : '#842f44'
   const base = (id: string, color: string): LayerSpecification => ({
@@ -50,7 +50,15 @@ export function styleFor(theme: Theme, tiles?: string): StyleSpecification {
       'line-color': dark ? '#718675' : '#fffef2', 'line-width': ['interpolate', ['linear'], ['zoom'], 7, .5, 17, 2.5],
     } },
   )
-  else layers.push({ id: 'graticule', type: 'line', source: 'grid', paint: { 'line-color': dark ? '#416059' : '#c6d4cb' } })
+  else layers.push(
+    { id: 'atlas-land', type: 'fill', source: 'atlas', paint: { 'fill-color': dark ? '#294039' : '#ece9d8' } },
+    { id: 'atlas-borders', type: 'line', source: 'atlas', paint: {
+      'line-color': dark ? '#61746a' : '#a0aba0', 'line-width': ['interpolate', ['linear'], ['zoom'], 1, .55, 8, 1.25],
+    } },
+    { id: 'graticule', type: 'line', source: 'grid', paint: {
+      'line-color': dark ? '#587478' : '#8ca5a7', 'line-opacity': ['interpolate', ['linear'], ['zoom'], 1, .48, 7, .12],
+    } },
+  )
   const points = ['visits', 'positions', 'ends'] as const
   layers.push({
     id: 'heat-points', type: 'heatmap', source: 'density', layout: { visibility: 'none' },
@@ -89,6 +97,7 @@ export function styleFor(theme: Theme, tiles?: string): StyleSpecification {
     version: 8,
     sources: {
       grid: { type: 'geojson', data: lines },
+      ...(!tiles ? { atlas: { type: 'geojson', data: { ...empty, features: [] }, maxzoom: 8, tolerance: .55 } } : {}),
       visits: { type: 'geojson', data: { ...empty, features: [] }, cluster: true, clusterMaxZoom: 13, clusterRadius: 38 },
       positions: { type: 'geojson', data: { ...empty, features: [] }, cluster: true, clusterMaxZoom: 13, clusterRadius: 36 },
       ends: { type: 'geojson', data: { ...empty, features: [] } },

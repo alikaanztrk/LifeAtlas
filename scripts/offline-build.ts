@@ -5,7 +5,7 @@ import { transformWithEsbuild } from 'vite'
 import type { Plugin } from 'vite'
 
 const publicAssets = ['atlas-mark.svg', 'atlas-192.png', 'atlas-512.png', 'lifeatlas.webmanifest']
-const bundledAsset = /^assets\/[\w.-]+\.(?:js|css)$/
+const bundledAsset = /^assets\/(?:[\w.-]+\.(?:js|css)|atlas-(?:countries|settlements)-[\w-]+\.mapdata)$/
 
 export function offlineBuild(): Plugin {
   return {
@@ -17,7 +17,7 @@ export function offlineBuild(): Plugin {
         if (!options.dir) throw new Error('Offline build requires a static output directory')
         const dir = options.dir
         const paths = [
-          'index.html', 'lifeatlas-license.txt', 'worker-licenses.txt', 'third-party-licenses.md',
+          'index.html', 'lifeatlas-license.txt', 'worker-licenses.txt', 'third-party-licenses.md', 'geography-notices.txt',
           ...publicAssets, ...Object.keys(bundle).filter((path) => bundledAsset.test(path)),
         ].sort()
         const assets = await Promise.all(paths.map(async (path) => {

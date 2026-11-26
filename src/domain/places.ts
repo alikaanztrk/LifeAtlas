@@ -1,5 +1,6 @@
 import type { Edit, PlaceLabel } from './edits'
 import type { Coordinate, Event, Visit } from './model'
+import type { Area } from './geography'
 import { clip, contains, distanceMeters, mergeIntervals, toWindow } from './primitives'
 import type { Window } from './primitives'
 
@@ -7,13 +8,14 @@ type Place = { key: string; members: Visit[]; anchor?: Coordinate; label?: Place
 export type PlaceSort = 'visits' | 'duration' | 'recent' | 'name'
 export type PlaceSummary = {
   key: string; target: string; name?: string; label?: PlaceLabel; count: number; total: number;
-  duration: number; first: number; last: number; anchor?: Coordinate
+  duration: number; first: number; last: number; anchor?: Coordinate; area?: Area
 }
 export type PlaceVisit = Window & { id: string; dayAt: number }
 
 const radius = 100
 const earth = 6_371_008.8
 const order = (a: Visit, b: Visit) => a.start.ms - b.start.ms || a.id.localeCompare(b.id)
+const searchableName = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replaceAll('ı', 'i')
 
 function spatialCell(coord: Coordinate) {
   const lat = coord.lat * Math.PI / 180
@@ -35,7 +37,11 @@ function groupPlaces(events: Event[]) {
       items.set(key, group)
       continue
     }
-    if (!visit.coord) continue
+    if (!visit.coord) {
+      const key = 'record:' + visit.id
+      items.set(key, { key, members: [visit] })
+      continue
+    }
     const cell = spatialCell(visit.coord)
     let nearest: Place | undefined
     let distance = radius
@@ -107,22 +113,38 @@ export class PlaceIndex {
 
   constructor(events: Event[]) { this.base = groupPlaces(events) }
 
-  withEdits(actions: Edit[]) { return new PlaceCatalog(replay(this.base, actions)) }
+  withEdits(actions: Edit[], locate?: (coord?: Coordinate) => Area | undefined) {
+    return new PlaceCatalog(replay(this.base, actions), locate)
+  }
 }
 
 export class PlaceCatalog {
-  constructor(private readonly data: ReturnType<typeof replay>) {}
+  private readonly names = new Map<Place, string | undefined>()
+
+  constructor(private readonly data: ReturnType<typeof replay>,
+    private readonly locate?: (coord?: Coordinate) => Area | undefined) {}
 
   homes() {
     return [...this.data.groups.values()].filter((place) => place.label?.category === 'home')
       .map(({ anchor }) => anchor)
   }
 
-  labelFor(visit: string) { return this.data.membership.get(visit)?.label?.name || undefined }
+  private name(place: Place) {
+    if (!this.names.has(place)) {
+      this.names.set(place, place.label?.name || place.members.find((visit) => visit.label)?.label)
+    }
+    return this.names.get(place)
+  }
+
+  labelFor(visit: string, recorded?: string) {
+    const group = this.data.membership.get(visit)
+    return group ? group.label?.name || recorded || this.name(group) : recorded
+  }
 
   list(options: { window?: Window; search: string; sort: PlaceSort; page: number; detail?: string; locale: string }) {
     const { window, detail, page, sort, locale } = options
-    const search = options.search.trim().toLocaleLowerCase(locale)
+    const search = searchableName(options.search.trim())
+    const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
     const rows: PlaceSummary[] = []
     let active: { place: PlaceSummary; visits: PlaceVisit[]; more: number } | undefined
     let scoped = 0
@@ -135,21 +157,25 @@ export class PlaceCatalog {
       if (!vis.length || !target) continue
       scoped++
       const times = mergeIntervals(vis)
-      const name = place.label?.name || place.members.find((visit) => visit.label)?.label
+      const name = this.name(place)
+      const area = this.locate?.(place.anchor)
       const summary: PlaceSummary = {
         key: target, target, name, label: place.label, count: vis.length, total: place.members.length,
         duration: times.reduce((total, time) => total + time.end - time.start, 0),
         first: times[0]?.start ?? 0, last: times.at(-1)?.end ?? 0,
-        anchor: place.anchor,
+        anchor: place.anchor, area,
       }
       if (detail && this.data.membership.get(detail) === place) {
         vis.sort((a, b) => b.start - a.start || a.id.localeCompare(b.id))
         active = { place: summary, visits: vis.slice(0, 100), more: Math.max(0, vis.length - 100) }
       }
-      const searchable = [name ?? '', place.label?.tags.join(' ') ?? '', place.label?.category ?? '']
-      if (searchable.some((value) => value.toLocaleLowerCase(locale).includes(search))) rows.push(summary)
+      const searchable = [name ?? '', place.label?.tags.join(' ') ?? '', place.label?.category ?? '',
+        area?.settlement?.name ?? '', area ? regionNames.of(area.country) ?? '' : '']
+      if (!search || searchable.some((value) => searchableName(value).includes(search))) rows.push(summary)
     }
-    const compareName = (a: PlaceSummary, b: PlaceSummary) => (a.name ?? '').localeCompare(b.name ?? '', locale)
+    const sortName = (row: PlaceSummary) => row.name ?? row.area?.settlement?.name ??
+      (row.area ? regionNames.of(row.area.country) : undefined) ?? ''
+    const compareName = (a: PlaceSummary, b: PlaceSummary) => sortName(a).localeCompare(sortName(b), locale)
     rows.sort((a, b) => (sort === 'duration' ? b.duration - a.duration : sort === 'recent' ? b.last - a.last
       : sort === 'name' ? compareName(a, b) : b.count - a.count) || a.key.localeCompare(b.key))
     const size = 30

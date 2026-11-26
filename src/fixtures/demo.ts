@@ -1,9 +1,13 @@
 export function demoFile(): File {
   const at = (day: number, time: string) => '2025-05-' + String(day).padStart(2, '0') + 'T' + time + 'Z'
   const records = [3, 4, 8, 9, 15, 20, 22, 26].flatMap((day, index) => {
-    const latitude = -42 + index / 100
-    const start = { lat: latitude, lon: -137 }
-    const end = { lat: latitude, lon: -136.98 }
+    // Fictional visits around Wellington. Preserve the demo's existing route lengths.
+    const originalLatitude = -42 + index / 100
+    const latitude = -41.319 + index * .006
+    const longitude = 174.735 + (index * 5 % 8) * .009
+    const step = .01 * Math.cos(originalLatitude * Math.PI / 180) / Math.cos(latitude * Math.PI / 180)
+    const start = { lat: latitude, lon: longitude }
+    const end = { lat: latitude, lon: longitude + 2 * step }
     return [{
       startTime: at(day, '08:30:00'), endTime: at(day, '09:15:00'),
       visit: { topCandidate: {
@@ -18,7 +22,7 @@ export function demoFile(): File {
       },
       timelinePath: [
         { point: start, time: at(day, '09:15:00') },
-        { point: { lat: latitude + .002, lon: -136.99 }, time: at(day, '09:30:00') },
+        { point: { lat: latitude + .002, lon: longitude + step }, time: at(day, '09:30:00') },
         { point: end, time: at(day, '09:45:00') },
       ],
     }]

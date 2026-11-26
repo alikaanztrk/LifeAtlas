@@ -5,6 +5,7 @@ import type { Edit, PlaceCategory } from '../../domain/edits'
 import type { PlaceSort, PlaceSummary } from '../../domain/places'
 import { dayKey } from '../../domain/dates'
 import { date, number, t, timeDuration } from '../../locales/i18n'
+import { areaDetail, areaSubtitle, placeTitle } from '../../locales/geography'
 import type { Theme } from '../../locales/i18n'
 import type { ExploreResult } from '../../workers/explore-protocol'
 import { MapPanel } from '../explore/MapPanel'
@@ -13,8 +14,8 @@ export type PlaceQuery = { search: string; sort: PlaceSort; page: number; detail
 const sortLabels: Record<PlaceSort, string> = { visits: 'sortCount', duration: 'sortDuration', recent: 'sortRecent', name: 'sortName' }
 const categoryLabels: Record<PlaceCategory, string> = { none: 'categoryNone', home: 'categoryHome', work: 'categoryWork', other: 'categoryOther' }
 
-function PlaceEditor({ place, options, busy, mutate }: {
-  place: PlaceSummary; options: PlaceSummary[]; busy: boolean; mutate: (edit: Edit) => Promise<boolean>
+function PlaceEditor({ place, options, busy, zone, mutate }: {
+  place: PlaceSummary; options: PlaceSummary[]; busy: boolean; zone: string; mutate: (edit: Edit) => Promise<boolean>
 }) {
   const [name, setName] = useState(place.label?.name ?? '')
   const [tags, setTags] = useState(place.label?.tags.join(', ') ?? '')
@@ -51,7 +52,7 @@ function PlaceEditor({ place, options, busy, mutate }: {
       <label>{t('mergeTarget')}<select aria-label={t('mergeTarget')} value={from} onChange={(event) => setFrom(event.target.value)}>
         <option value="">{t('pickPlace')}</option>
         {candidates.map((candidate) => <option key={candidate.key} value={candidate.target}>
-          {candidate.name || t('unnamedPlace')} · {number(candidate.count)}
+          {placeTitle(candidate.name, candidate.area, date(candidate.last, zone))} · {number(candidate.count)}
         </option>)}
       </select></label>
       <button className="button secondary" disabled={busy || !candidates.some((option) => option.target === from)}>{t('placesMerge')}</button>
@@ -73,7 +74,7 @@ export function Places({ controls, result, zone, theme, busy, undoable, onContro
       <button className="button secondary" disabled={!undoable || busy} onClick={undo}><Undo2 size={16} aria-hidden="true" />{t('undoEdit')}</button>
     </header>
     <div className="advanced-layout">
-      <section className="panel">
+      <section className="panel place-directory">
         <div className="view-toolbar">
           <label className="compact-field"><Search size={15} aria-hidden="true" />{t('placeSearch')}
             <input type="search" maxLength={120} value={controls.search} onChange={(event) => onControls({ search: event.target.value, page: 0 })} />
@@ -92,7 +93,8 @@ export function Places({ controls, result, zone, theme, busy, undoable, onContro
             <th scope="col">{t('sortDuration')}</th><th scope="col">{t('lastSeen')}</th></tr></thead>
           <tbody>{value.rows.map((place) => <tr key={place.key} className={active?.place.key === place.key ? 'selected-record' : undefined}>
             <th scope="row"><button type="button" className="button link-button" onClick={() => onControls({ detail: place.target })}>
-              <MapPin size={15} aria-hidden="true" />{place.name || t('unnamedPlace')}</button>
+              <MapPin size={15} aria-hidden="true" />{placeTitle(place.name, place.area, date(place.last, zone))}</button>
+              {areaSubtitle(place.name, place.area) && <small className="place-region">{areaSubtitle(place.name, place.area)}</small>}
               {!!place.label?.tags.length && <small>{place.label.tags.join(' · ')}</small>}</th>
             <td>{number(place.count)}</td><td>{timeDuration(place.duration)}</td><td>{date(place.last, zone)}</td>
           </tr>)}</tbody>
@@ -104,15 +106,19 @@ export function Places({ controls, result, zone, theme, busy, undoable, onContro
         </div>}
       </section>
       {active && <section className="panel place-details">
-        <header><h2>{active.place.name || t('unnamedPlace')}</h2><p className="muted">{t('placeDetails')}
+        <header className="place-dossier"><h2>{placeTitle(active.place.name, active.place.area, date(active.place.last, zone))}</h2><p>{t('placeDetails')}
           {active.place.label?.category && active.place.label.category !== 'none' && ' · ' + t(categoryLabels[active.place.label.category])}</p></header>
+        {active.place.area && <p className="place-geography"><strong>{t('geographicContext')}</strong> · {areaDetail(active.place.area)}
+          {' · '}<a href="https://www.geonames.org/" target="_blank" rel="noreferrer">GeoNames</a></p>}
+        {!active.place.name && <p className="muted">{t('nameUnavailable')}</p>}
         <dl className="fact-list">
           <div><dt>{t('firstSeen')}</dt><dd>{date(active.place.first, zone)}</dd></div>
           <div><dt>{t('lastSeen')}</dt><dd>{date(active.place.last, zone)}</dd></div>
           <div><dt>{t('visits')}</dt><dd>{number(active.place.count)}</dd></div>
           <div><dt>{t('sortDuration')}</dt><dd>{timeDuration(active.place.duration)}</dd></div>
         </dl>
-        <PlaceEditor key={active.place.key + JSON.stringify(active.place.label)} place={active.place} options={value?.rows ?? []} busy={busy} mutate={mutate} />
+        <PlaceEditor key={active.place.key + JSON.stringify(active.place.label)} place={active.place} options={value?.rows ?? []} busy={busy}
+          zone={zone} mutate={mutate} />
         {result?.map && <MapPanel data={result.map} simple defer theme={theme} />}
         <h3>{t('recentVisits')}</h3>
         <p className="muted">{t('placeVisitTotal', { count: number(active.place.total) })}</p>

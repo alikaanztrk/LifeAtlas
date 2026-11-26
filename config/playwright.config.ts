@@ -6,7 +6,8 @@ const executablePath = process.env.LIFEATLAS_CHROME_PATH ??
   (process.platform === 'win32' && existsSync(windowsChrome) ? windowsChrome : undefined)
 
 export default defineConfig({
-  testDir: 'e2e',
+  testDir: '../e2e',
+  outputDir: '../test-results',
   timeout: 30_000,
   workers: 2,
   use: {
@@ -17,6 +18,7 @@ export default defineConfig({
     trace: 'off', screenshot: 'off', video: 'off',
   },
   webServer: {
+    cwd: '..',
     command: 'npm run preview -- --port 4180 --strictPort',
     url: 'http://127.0.0.1:4180/LifeAtlas/',
     timeout: 20_000,

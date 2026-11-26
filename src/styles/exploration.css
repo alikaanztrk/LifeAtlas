@@ -88,11 +88,6 @@ button.timeline-row:hover, button.timeline-row[aria-pressed='true'] { background
 }
 .mini-map .map-matte { height: clamp(230px, 35vh, 330px); }
 .map-canvas-wrap, .map-canvas, .map-canvas.maplibregl-map { position: absolute; inset: 0; }
-.map-grid-overlay {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: linear-gradient(90deg, currentColor 1px, transparent 1px), linear-gradient(currentColor 1px, transparent 1px);
-  background-size: 44px 44px; color: var(--accent); opacity: .075;
-}
 .map-state { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 9px;
   padding: 18px; text-align: center; color: var(--muted); font-size: .89rem; }
 .map-notice { position: absolute; top: 10px; left: 10px; right: 66px; width: fit-content; padding: 5px 8px;

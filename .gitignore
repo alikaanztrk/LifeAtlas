@@ -4,6 +4,12 @@ coverage/
 playwright-report/
 test-results/
 .local/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+CODEX_PROMPT.md
+BASLANGIC.md
+PLAN.md
 private/
 exports/
 downloads/

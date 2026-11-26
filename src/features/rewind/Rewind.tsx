@@ -5,6 +5,7 @@ import type { CalendarView } from '../../domain/dates'
 import { knownMeters } from '../../domain/exploration'
 import type { RewindChapter, RewindReport } from '../../domain/rewind'
 import { formatDistance, locale, number, printDays, t, timeDuration } from '../../locales/i18n'
+import { placeTitle } from '../../locales/geography'
 import { ShareCard } from './ShareCard'
 
 const chapterTitles: Record<RewindChapter, string> = {
@@ -38,7 +39,7 @@ function Chapter({ kind, report, onDay }: { kind: RewindChapter; report: RewindR
     </>
   }
   if (kind === 'places') return <dl className="story-facts story-places">
-    {report.places.map((place, index) => <div key={index}><dt>{place.name || t('unnamedPlace')}</dt>
+    {report.places.map((place, index) => <div key={index}><dt>{placeTitle(place.name, place.area)}</dt>
       <dd>{t(place.count === 1 ? 'onePlaceVisit' : 'placeVisitsCount', { count: number(place.count) })}</dd>
     </div>)}
   </dl>

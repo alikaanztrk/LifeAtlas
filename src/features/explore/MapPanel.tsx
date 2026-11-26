@@ -6,6 +6,7 @@ import type { Coordinate } from '../../domain/model'
 import type { MapLayer } from '../../maps/map-style'
 import { locale, number, t } from '../../locales/i18n'
 import type { Theme } from '../../locales/i18n'
+import { areaSubtitle, areaName } from '../../locales/geography'
 
 const MapCanvas = lazy(() => import('../../maps/MapCanvas'))
 const layerLabels: Record<MapLayer, string> = {
@@ -13,10 +14,11 @@ const layerLabels: Record<MapLayer, string> = {
 }
 const layerDefaults = { visits: true, paths: true, positions: true, ends: true, heat: false }
 const layersForRow = { visit: 'visits', activity: 'ends', raw: 'positions', path: 'paths' } as const
-const names = { visit: 'unnamedPlace', activity: 'sourceActivity', path: 'sourcePath', raw: 'sourceRaw' }
+const names = { visit: 'sourceVisit', activity: 'sourceActivity', path: 'sourcePath', raw: 'sourceRaw' }
 
 export function mapRowName(row: MapRow) {
-  return row.label || (row.mode && row.kind === 'activity' ? t('mode.' + row.mode) : t(names[row.kind]))
+  return row.label || (row.area ? areaName(row.area)
+    : row.mode && row.kind === 'activity' ? t('mode.' + row.mode) : t(names[row.kind]))
 }
 
 export function MapPanel({ data, theme, online = false, simple = false, defer = false, selected, marker, onSelect, onOpenDay }: {
@@ -37,6 +39,7 @@ export function MapPanel({ data, theme, online = false, simple = false, defer = 
   }, [show])
 
   const active = data.rows.find((row) => row.id === selected)
+  const context = areaSubtitle(active?.label, active?.area)
   const rows = data.rows.filter((row) => visibility[layersForRow[row.kind]])
   const pathModes = new Set(data.paths.features.map((feature) => feature.properties.mode))
   const currentPage = Math.min(page, Math.max(0, Math.ceil(rows.length / 12) - 1))
@@ -55,13 +58,16 @@ export function MapPanel({ data, theme, online = false, simple = false, defer = 
           online={online} selected={selected} marker={marker} onSelect={onSelect} />
       </Suspense> : !data.bounds ? <p className="map-state"><MapPin size={21} aria-hidden="true" />{t('noLocations')}</p> : null}
     </div>
-    <div className="map-caption"><span>{t(online ? 'onlineMap' : 'localMap')}</span><span>{t('mapCount', { count: number(data.mapped) })}</span></div>
+    <div className="map-caption"><span><span>{t(online ? 'onlineMap' : 'localMap')}</span>
+      {!online && <> · <a href="https://www.naturalearthdata.com/" target="_blank" rel="noreferrer">Natural Earth</a></>}
+    </span><span>{t('mapCount', { count: number(data.mapped) })}</span></div>
     {!simple && visibility.paths && pathModes.size > 0 && <ul className="path-colors" aria-label={t('pathColors')}>
       {Array.from(pathModes, (mode) => <li key={mode}><i className={'path-color path-' + mode} aria-hidden="true" />{t('mode.' + mode)}</li>)}
     </ul>}
     {data.omitted > 0 && <p className="muted map-sampling">{t('mapSample')}</p>}
     {!simple && active && <div className="map-selection">
       <div><strong>{mapRowName(active)}</strong>
+        {context && <p className="muted">{context}</p>}
         <p className="muted">{active.day ? displayDay(active.day, locale(), { dateStyle: 'full' }) : t('noDateForRecord')}</p></div>
       {active.day && onOpenDay && <button className="button primary" onClick={() => onOpenDay(active.day!, active.id)}>{t('openDay')}</button>}
     </div>}

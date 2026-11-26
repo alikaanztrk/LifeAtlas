@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vitest/config'
-import { offlineBuild } from './scripts/offline-build'
+import { offlineBuild } from '../scripts/offline-build'
 
 export default defineConfig(({ command }) => ({
   base: '/LifeAtlas/',
@@ -18,10 +18,12 @@ export default defineConfig(({ command }) => ({
       name: 'local-and-worker-license-notices',
       apply: 'build',
       generateBundle() {
-        this.emitFile({ type: 'asset', fileName: 'lifeatlas-license.txt', source: readFileSync(new URL('./LICENSE', import.meta.url)) })
+        this.emitFile({ type: 'asset', fileName: 'lifeatlas-license.txt', source: readFileSync(new URL('../LICENSE', import.meta.url)) })
+        this.emitFile({ type: 'asset', fileName: 'geography-notices.txt',
+          source: readFileSync(new URL('../src/geography/NOTICE.txt', import.meta.url)) })
         this.emitFile({ type: 'asset', fileName: 'worker-licenses.txt',
           source: ['@noble/hashes/LICENSE', 'maplibre-gl/LICENSE.txt'].map((license) =>
-            readFileSync(new URL('./node_modules/' + license, import.meta.url), 'utf8')).join('\n\n') })
+            readFileSync(new URL('../node_modules/' + license, import.meta.url), 'utf8')).join('\n\n') })
       },
     },
   ],
@@ -31,7 +33,7 @@ export default defineConfig(({ command }) => ({
     host: '127.0.0.1',
     fs: {
       deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '**/{private,exports,downloads,Takeout,.local}/**',
-        '**/*.{json,JSON,csv,CSV,zip,ZIP,geojson,gpx,kml,kmz}'],
+        '**/{AGENTS,CLAUDE,GEMINI,CODEX_PROMPT,BASLANGIC,PLAN}.md', '**/*.{json,JSON,csv,CSV,zip,ZIP,geojson,gpx,kml,kmz}'],
     },
   },
   preview: { host: '127.0.0.1' },

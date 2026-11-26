@@ -18,9 +18,9 @@ function Metric({ icon, title, value, children }: MetricProps) {
 
 export type OverviewData = { summary: Summary; report: ImportReport; mergedDuplicates?: number }
 
-export function Overview({ value, isDemo, loading, onDemo, onImport, extra, filtered = false }: {
+export function Overview({ value, isDemo, loading, onDemo, onImport, atlas, extra, filtered = false }: {
   value: OverviewData | null; isDemo: boolean; loading: boolean; onDemo: () => void; onImport: () => void
-  extra?: ReactNode; filtered?: boolean
+  atlas?: ReactNode; extra?: ReactNode; filtered?: boolean
 }) {
   if (loading) return <div className="panel centered-state" role="status">{t('storageLoading')}</div>
   if (!value) return (
@@ -49,6 +49,7 @@ export function Overview({ value, isDemo, loading, onDemo, onImport, extra, filt
         </dl>
       </header>
       {isDemo && <p className="notice warning" role="status">{t('demoNotice')}</p>}
+      {atlas}
       <div className="metric-grid">
         <Metric icon={<Route size={18} />} title={t('distance')} value={formatDistance(total)}>
           <dl className="distance-parts">

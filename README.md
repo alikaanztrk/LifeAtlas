@@ -35,6 +35,8 @@ Need a JSON file? Follow Google’s export instructions for your device. [Androi
 | **Places and Trips** | Name and group visits, tag places, edit trips and review suggested overnight trips. Your labels and edits stay separate from the source records. |
 | **Rewind** | Revisit a month or year, see where coverage is partial, and preview a portrait or square PNG. Select which summary fields to include. |
 
+The archive map uses bundled country outlines and nearby settlement names. A label such as **Near İstanbul** describes an approximate area. LifeAtlas shows place names supplied in the export or entered in **Places**, and lets you name a visit when the export supplied coordinates alone. [Offline data sources](docs/THIRD_PARTY_NOTICES.md#offline-map-data)
+
 <details>
 <summary>More from the synthetic demo</summary>
 
@@ -65,19 +67,19 @@ LifeAtlas accepts up to 12 files per import, **50 MiB per file** and **64 MiB co
 - The map samples large sets for display and groups points. The distance calculations use canonical geometry. Playback uses observed coordinates and omits the marker in gaps. If playback reaches its 32,000-observation limit, narrow the date range.
 - Trips can be entered manually. Automatic suggestions require an explicitly tagged Home and a recorded overnight visit away from it. Suggestions become trips only after you save them. The edit history supports up to 1,024 operations per archive.
 
-[Data engine specification](docs/04_DATA_ENGINE.md) · [Implementation and benchmarks](PLAN.md)
-
 </details>
 
 ## Privacy and offline use
 
-LifeAtlas reads and analyzes selected files on your device. It runs without an account, API key, server-side archive storage or telemetry. **Data & privacy** lets you delete the saved archive or clear local archive data and preferences. Saved archives use IndexedDB. Anyone with access to the browser profile or its extensions may be able to inspect them.
+LifeAtlas reads and analyzes selected files on your device. It runs without an account, API key, server-side archive storage or telemetry. **Data & privacy** lets you delete the saved archive or clear local archive data and preferences. Saved archives use unencrypted IndexedDB. Anyone with access to the browser profile or its extensions may be able to inspect them.
+
+Country and settlement lookup uses the bundled Natural Earth and GeoNames files, including offline. Coordinates are processed in a local worker.
 
 - **Local map by default.** The optional OpenFreeMap basemap requires permission for the current tab. The provider receives tile coordinates, zoom, IP address and request timing. Route playback uses the local map. [OpenFreeMap](https://openfreemap.org/quick_start/) · [OpenStreetMap attribution](https://www.openstreetmap.org/copyright)
 - **Install or open offline.** Open the production site, then wait for **Ready to open offline** under **Data & privacy → Offline access**. Install from the Chrome menu or keep opening the same URL. The service worker caches app files. To apply an available update, close all LifeAtlas tabs and windows and reopen. Closing a tab clears its session archive.
 - **Review before sharing.** Rewind exports an image on your device. The image contains only the summary fields you enable. Coordinates, paths, place names and exact timestamps are excluded.
 
-[Read the privacy notice](PRIVACY.md)
+The browser may evict offline app files and saved archives. Clearing archive data in LifeAtlas preserves the original JSON and the cached app. Use Chrome’s site data settings to remove the cache as well.
 
 ## Run locally
 
@@ -101,6 +103,8 @@ Open [the production preview](http://127.0.0.1:4173/LifeAtlas/). Windows PowerSh
 
 LifeAtlas is a static React and TypeScript app. Vite builds the app, Web Workers parse and query archives, IndexedDB holds saved archives, and MapLibre and ECharts render the map and charts. Use the built-in demo or synthetic fixtures to reproduce issues.
 
+Application code lives in [src/](src/), Vite and Playwright configuration in [config/](config/), browser tests in [e2e/](e2e/) and build utilities in [scripts/](scripts/).
+
 ```sh
 npm run lint
 npm run typecheck
@@ -112,7 +116,9 @@ npm run test:e2e
 
 Playwright uses installed Chrome on Windows when available. On other hosts, install Chromium with `npx playwright install chromium` or set `LIFEATLAS_CHROME_PATH`. Run `npm run fixture:generate -- 50` to create a deterministic stress input under `.local/`.
 
-[Contributing](CONTRIBUTING.md) · [Security reports](SECURITY.md) · [Architecture](docs/03_ARCHITECTURE.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Pages workflow](.github/workflows/pages.yml)
+Report privacy and security issues privately. Use **Security → Report a vulnerability** when available and include a synthetic reproducer and the browser version. Keep personal exports and screenshots of real archives out of public reports.
+
+[Third-party notices](docs/THIRD_PARTY_NOTICES.md) · [Pages workflow](.github/workflows/pages.yml)
 
 ## Türkçe
 

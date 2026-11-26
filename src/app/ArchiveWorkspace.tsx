@@ -4,7 +4,7 @@ import { ExploreMap } from '../features/explore/ExploreMap'
 import { Calendar } from '../features/calendar/Calendar'
 import { Timeline } from '../features/timeline/Timeline'
 import { Overview } from '../features/overview/Overview'
-import { OverviewInsights } from '../features/overview/OverviewInsights'
+import { OverviewAtlas, OverviewInsights } from '../features/overview/OverviewInsights'
 import { dayKey, displayDay, periodDays } from '../domain/dates'
 import type { CalendarView, DateRange } from '../domain/dates'
 import type { Dataset, Mode } from '../domain/model'
@@ -25,6 +25,7 @@ import type { TripQuery } from '../features/trips/Trips'
 import { Analytics } from '../features/analytics/Analytics'
 import '../styles/advanced.css'
 import '../styles/rewind.css'
+import '../styles/atlas.css'
 
 const Rewind = lazy(() => import('../features/rewind/Rewind'))
 
@@ -87,6 +88,10 @@ export default function ArchiveWorkspace({ route, dataset, source, demo, theme, 
     changeDay(next)
     onNavigate('calendar')
   }
+  function openPlace(detail?: string) {
+    setPlaceQuery({ detail, search: '', sort: 'visits', page: 0 })
+    onNavigate('places')
+  }
   function apply(next: DateRange) {
     setRange(next)
     if (next.kind !== 'all' && (day < next.first || day > next.last)) setCursor(next.last)
@@ -138,7 +143,8 @@ export default function ArchiveWorkspace({ route, dataset, source, demo, theme, 
       {route === 'overview' && (summary
         ? <Overview value={{ ...dataset, summary }} isDemo={demo} loading={false} filtered={range.kind !== 'all'}
           onDemo={onDemo} onImport={() => onNavigate('import')}
-          extra={overview ? <OverviewInsights data={overview} theme={theme} openCalendar={openCalendar} openMap={() => openMap()} />
+          atlas={overview && <OverviewAtlas data={overview} theme={theme} openMap={() => openMap()} />}
+          extra={overview ? <OverviewInsights data={overview} theme={theme} openCalendar={openCalendar} openPlaces={openPlace} />
             : <p className="notice" role="status">{t('loadingView')}</p>} />
         : <p className="notice" role="status">{t('loadingView')}</p>)}
       {route === 'calendar' && <Calendar day={day} view={calendarView}
@@ -164,7 +170,7 @@ export default function ArchiveWorkspace({ route, dataset, source, demo, theme, 
       {route === 'analytics' && <Analytics zone={zone} value={result?.kind === 'analytics' ? result.value : undefined}
         ready={result?.kind === 'analytics'} baseline={compare} onCompare={setCompare}
         places={result?.kind === 'analytics' ? result.places : []}
-        onPlace={(detail) => { setPlaceQuery({ detail, search: '', sort: 'visits', page: 0 }); onNavigate('places') }} />}
+        onPlace={openPlace} />}
       {route === 'rewind' && <Suspense fallback={<p className="notice" role="status">{t('loadingView')}</p>}>
         <Rewind day={storyDay} view={rewindView} report={result?.kind === 'rewind' ? result.value : undefined}
           demo={demo} onView={setRewindView} onPeriod={setRewindDay} onDay={openDay} />

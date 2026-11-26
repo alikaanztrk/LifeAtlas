@@ -12,6 +12,7 @@ import type { Theme } from '../locales/i18n'
 import { assetSources, mapLayers, styleFor } from './map-style'
 import type { MapLayer } from './map-style'
 import { manifestUrl, openFreeMapRequest, tileAddress, tileTemplate } from './online-policy'
+import { loadCountries } from '../geography/data'
 
 const protocol = 'lifeatlas-tiles'
 const network = new Map<string, { template: string; abort: AbortSignal; fail: () => void }>()
@@ -57,6 +58,7 @@ export default function MapCanvas({ data, visibility, selected, marker, onSelect
     const abort = new AbortController()
     const permit = crypto.randomUUID()
     let instance: MapLibre | undefined
+    let disposed = false
     const failOnline = () => {
       if (abort.signal.aborted) return
       abort.abort()
@@ -82,6 +84,11 @@ export default function MapCanvas({ data, visibility, selected, marker, onSelect
         setMap(current)
         current.getCanvas().setAttribute('aria-label', t('mapTitle'))
         current.getCanvas().setAttribute('role', 'region')
+        if (current.getSource('atlas')) {
+          void loadCountries().then((outlines) => {
+            if (!disposed) current.getSource<GeoJSONSource>('atlas')?.setData(outlines)
+          }).catch(() => { /* Geometric overlays are still available on the local grid. */ })
+        }
       })
       if (online) {
         void (async () => {
@@ -103,6 +110,7 @@ export default function MapCanvas({ data, visibility, selected, marker, onSelect
       setProblem('map')
     }
     return () => {
+      disposed = true
       abort.abort()
       network.delete(permit)
       instance?.remove()
@@ -183,7 +191,6 @@ export default function MapCanvas({ data, visibility, selected, marker, onSelect
 
   return <div className="map-canvas-wrap">
     <div className="map-canvas" ref={container} hidden={problem === 'map'} />
-    {map && problem !== 'map' && !onlineReady && <div className="map-grid-overlay" aria-hidden="true" />}
     {!map && !problem && <p className="map-state" role="status">{t('mapLoading')}</p>}
     {problem === 'map' && <p className="map-state" role="status">{t('mapFailed')}</p>}
     {problem === 'online' && <p className="map-notice" role="status">{t('onlineFailed')}</p>}

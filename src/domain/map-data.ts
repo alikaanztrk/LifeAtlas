@@ -2,12 +2,13 @@ import type { Feature, FeatureCollection, LineString, Point, Position } from 'ge
 import { dayKey } from './dates'
 import { evidenceBounds } from './event-index'
 import type { Coordinate, Mode, Path } from './model'
+import type { Area } from './geography'
 import { contains } from './primitives'
 import type { Window } from './primitives'
 import type { Exploration } from './exploration'
 
 export type MapKind = 'visit' | 'activity' | 'path' | 'raw'
-export type MapRow = { id: string; kind: MapKind; day: string | null; label?: string; mode?: Mode }
+export type MapRow = { id: string; kind: MapKind; day: string | null; label?: string; mode?: Mode; area?: Area }
 export type MapProperties = { recordId: string; mode: Mode }
 export type MapData = {
   visits: FeatureCollection<Point, MapProperties>; positions: FeatureCollection<Point, MapProperties>
@@ -83,6 +84,7 @@ function pathLines(path: Path, experience: Exploration, window?: Window) {
 
 export function buildMap(
   experience: Exploration, zone: string, window?: Window, mode?: Mode, selected?: string, allowed?: Set<string>,
+  locate?: (coord?: Coordinate) => Area | undefined,
 ): MapData {
   const data: MapData = {
     visits: collection(), positions: collection(), paths: collection(), tracePoints: collection(), ends: collection(),
@@ -121,6 +123,7 @@ export function buildMap(
       id: event.id, kind: event.kind, mode: eventMode,
       day: bounds ? dayAt(Math.max(bounds.start, window?.start ?? bounds.start)) : null,
       label: event.kind === 'visit' ? event.label : undefined,
+      area: event.kind === 'visit' ? locate?.(event.coord) : event.kind === 'raw' ? locate?.(event.point.coord) : undefined,
     }
     const before = points.length
     const addPoint = (coord: Coordinate | undefined, source: FeatureCollection<Point, MapProperties>) => {

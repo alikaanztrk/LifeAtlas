@@ -70,6 +70,7 @@ export function DataPage({ selection, session, persistent, demo, storage, busy, 
           <div className="icon-tile"><ShieldCheck size={22} aria-hidden="true" /></div>
           <h2>{t('privacyTitle')}</h2>
           <p>{t('privacyCopy')}</p><p className="muted">{t('scopePrivacy')}</p>
+          {import.meta.env.PROD && <p><a href={import.meta.env.BASE_URL + 'geography-notices.txt'} target="_blank" rel="noreferrer">{t('geographicCredits')}</a></p>}
           <button className="button secondary" onClick={onOnline}>{t(online ? 'onlineOff' : 'onlineOn')}</button>
         </section>
         <section className="panel context-panel">

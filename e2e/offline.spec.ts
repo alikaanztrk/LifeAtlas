@@ -9,7 +9,7 @@ test.use({ serviceWorkers: 'allow' })
 const base = '/LifeAtlas/'
 const assets = async () => [
   'index.html', 'atlas-mark.svg', 'atlas-192.png', 'atlas-512.png', 'lifeatlas.webmanifest',
-  'lifeatlas-license.txt', 'worker-licenses.txt', 'third-party-licenses.md',
+  'lifeatlas-license.txt', 'worker-licenses.txt', 'third-party-licenses.md', 'geography-notices.txt',
   ...(await readdir('dist/assets')).map((path) => 'assets/' + path),
 ].sort()
 const settings = (page: Page) => page.getByRole('link', { name: 'Data & privacy', exact: true }).click()

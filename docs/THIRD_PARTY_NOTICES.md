@@ -1,6 +1,6 @@
 # Third-party notices
 
-LifeAtlas code and cartographic artwork were created for this project. The GitHub repositories listed in the [reference review](docs/09_PHASE_0_REFERENCE_REVIEW.md) informed architectural and product decisions. Their code, images and datasets were not incorporated.
+LifeAtlas code and cartographic artwork were created for this project. The dependencies and offline reference data used by the application are listed below.
 
 ## Application dependencies
 
@@ -20,3 +20,11 @@ LifeAtlas code and cartographic artwork were created for this project. The GitHu
 Development uses Vite 7.3.8, TypeScript 5.9.3, ESLint 10.15.0, Vitest 4.1.12, Playwright 1.65.1, fake-indexeddb 6.2.8 and axe-core 4.14.1. The npm lockfile lists the full resolved dependency graph. The production build includes the license text for the application and its bundled dependencies, including the import Worker.
 
 The optional online basemap uses OpenFreeMap's public vector tiles. Its on-screen attribution credits OpenFreeMap, © OpenMapTiles and © OpenStreetMap contributors. The style and local grid are LifeAtlas code. [OpenFreeMap quick start](https://openfreemap.org/quick_start/) · [OpenStreetMap copyright and ODbL](https://www.openstreetmap.org/copyright)
+
+## Offline map data
+
+LifeAtlas includes public domain Natural Earth 1:50m Admin 0 outlines from the v5.1.2 vector snapshot. Coordinates are rounded and only country or territory identifiers are retained. The outlines follow the dataset's default point of view. [Natural Earth terms](https://www.naturalearthdata.com/about/terms-of-use/) · [Source snapshot](https://github.com/nvkelso/natural-earth-vector/tree/v5.1.2)
+
+Nearby settlements use the 26 November 2026 GeoNames cities5000 extract under CC BY 4.0. LifeAtlas filters the settlement categories, removes unused fields, rounds coordinates, and selects equivalent published Turkish spellings where available. [GeoNames downloads](https://download.geonames.org/export/dump/) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+The compressed data files and their inputs are documented in [the bundled geography notice](../src/geography/NOTICE.txt). To regenerate the checked-in files, place the Natural Earth GeoJSON at `.local/atlas-input/countries.geojson` and the extracted GeoNames TSV at `.local/atlas-input/cities5000.txt`, then run `node scripts/prepare-geography.mjs`. Use the recorded input digests to reproduce this snapshot.

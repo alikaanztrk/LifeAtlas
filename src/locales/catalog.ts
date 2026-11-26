@@ -2,12 +2,14 @@ import { exploreEn, exploreTr } from './exploration'
 import { advancedEn, advancedTr } from './advanced'
 import { rewindEn, rewindTr } from './rewind'
 import { offlineEn, offlineTr } from './offline'
+import { geographyEn, geographyTr } from './geography-copy'
 
 export const en = {
   ...exploreEn,
   ...advancedEn,
   ...rewindEn,
   ...offlineEn,
+  ...geographyEn,
   skip: 'Skip to content', nav: 'Workspace', import: 'Import', overview: 'Overview', data: 'Data & privacy',
   menu: 'Toggle navigation', rail: 'Toggle sidebar width', theme: 'Switch theme', language: 'Change language', strict: 'Strict privacy',
   noArchive: 'No archive open', demoArchive: 'Synthetic demo', sessionArchive: 'Session archive',
@@ -91,6 +93,7 @@ export const tr: typeof en = {
   ...advancedTr,
   ...rewindTr,
   ...offlineTr,
+  ...geographyTr,
   skip: 'İçeriğe geç', nav: 'Çalışma alanı', import: 'İçe aktar', overview: 'Genel bakış', data: 'Veri ve gizlilik',
   menu: 'Gezinme menüsünü aç veya kapat', rail: 'Kenar çubuğunun genişliğini değiştir', theme: 'Temayı değiştir', language: 'Dili değiştir', strict: 'Sıkı gizlilik',
   noArchive: 'Açık arşiv yok', demoArchive: 'Sentetik demo', sessionArchive: 'Oturum arşivi',

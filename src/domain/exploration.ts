@@ -2,7 +2,8 @@ import { Temporal } from '@js-temporal/polyfill'
 import { dayKey, periodDays } from './dates'
 import type { CalendarView } from './dates'
 import { evidenceBounds, EventIndex } from './event-index'
-import type { Activity, Event, Mode, Summary } from './model'
+import type { Activity, Coordinate, Event, Mode, Summary } from './model'
+import type { Area } from './geography'
 import { clip, dayWindow, mergeIntervals, toWindow } from './primitives'
 import type { Window } from './primitives'
 import { activityDistance, compileMeasurements, summarize } from './summary'
@@ -17,12 +18,11 @@ export type DayCell = {
   meters: number | null; movementMs: number | null; visits: number | null
 }
 export type DayRow = Window & {
-  id: string; kind: Event['kind'] | 'gap'; mode?: Mode; label?: string
+  id: string; kind: Event['kind'] | 'gap'; mode?: Mode; label?: string; area?: Area
   distance?: ReturnType<typeof activityDistance>; clipped?: boolean
 }
 export type PeriodPoint = { first: string; last: string; movementMs: number | null; evidenceDays: number | null }
 export type ModeTime = { mode: Mode; ms: number }
-export type RankedPlace = { label?: string; visits: number }
 
 export function knownMeters(distance: Summary['distance']): number | null {
   if (distance.recorded === null && distance.estimated === null) return null
@@ -54,20 +54,6 @@ export function modeTime(events: Event[], window?: Window): ModeTime[] {
     previous = edge.at
   }
   return Array.from(sums, ([mode, ms]) => ({ mode, ms })).sort((a, b) => b.ms - a.ms)
-}
-
-function topPlaces(events: Event[]): { ranked: RankedPlace[]; covered: number } {
-  const places = new Map<string, RankedPlace>()
-  let covered = 0
-  for (const event of events) {
-    if (event.kind !== 'visit' || !event.placeId) continue
-    const place = places.get(event.placeId) ?? { visits: 0 }
-    place.visits++
-    place.label ??= event.label
-    places.set(event.placeId, place)
-    covered++
-  }
-  return { ranked: Array.from(places.values()).sort((a, b) => b.visits - a.visits).slice(0, 5), covered }
 }
 
 export class Exploration {
@@ -135,10 +121,10 @@ export class Exploration {
         first = next
       }
     }
-    return { summary, periods, modes: modeTime(events, filter), places: topPlaces(events) }
+    return { summary, periods, modes: modeTime(events, filter) }
   }
 
-  day(day: string, zone: string, filter?: Window) {
+  day(day: string, zone: string, filter?: Window, locate?: (coord?: Coordinate) => Area | undefined) {
     const bounds = clip(dayWindow(day, zone), filter)
     if (!bounds) return { bounds, rows: [], omitted: 0, summary: null }
     const events = this.events(bounds)
@@ -153,7 +139,8 @@ export class Exploration {
         ]
         const inside = times.filter((ms): ms is number => ms !== undefined && ms >= bounds.start && ms < bounds.end)
         if (!inside.length) continue
-        rows.push({ id: event.id, kind: event.kind, start: Math.min(...inside), end: Math.max(...inside) })
+        rows.push({ id: event.id, kind: event.kind, start: Math.min(...inside), end: Math.max(...inside),
+          area: event.kind === 'raw' ? locate?.(event.point.coord) : undefined })
         continue
       }
       const time = toWindow(event)
@@ -162,7 +149,7 @@ export class Exploration {
       if (part.end > part.start) known.push(part)
       rows.push({
         ...part, id: event.id, kind: event.kind, clipped: part.start !== time.start || part.end !== time.end,
-        ...(event.kind === 'visit' ? { label: event.label }
+        ...(event.kind === 'visit' ? { label: event.label, area: locate?.(event.coord) }
           : { mode: event.mode, distance: activityDistance(event, this.measurements, bounds) }),
       })
     }

@@ -7,13 +7,13 @@
     "node": "^22.13.0 || >=24"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config config/vite.config.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test:e2e": "playwright test",
+    "test": "vitest run --config config/vite.config.ts",
+    "build": "vite build --config config/vite.config.ts",
+    "preview": "vite preview --config config/vite.config.ts",
+    "test:e2e": "playwright test --config config/playwright.config.ts",
     "fixture:generate": "node scripts/generate-fixture.mjs",
     "scan:artifacts": "node scripts/scan-artifacts.mjs"
   },

@@ -5,6 +5,7 @@ import type { DayRow, Exploration } from '../../domain/exploration'
 import type { MapData } from '../../domain/map-data'
 import type { Theme } from '../../locales/i18n'
 import { formatDistance, locale, number, t, timeDuration } from '../../locales/i18n'
+import { areaSubtitle, areaName } from '../../locales/geography'
 import { MapPanel } from '../explore/MapPanel'
 
 const icons = { visit: MapPin, activity: Footprints, path: Route, raw: Dot, gap: Dot }
@@ -23,9 +24,11 @@ export function Timeline({ day, zone, value, map, theme, selected, onSelect, onD
   const rowContent = (row: DayRow) => {
     const Icon = icons[row.kind]
     const distance = row.distance
+    const context = areaSubtitle(row.label, row.area)
     return <>
       <Icon size={18} aria-hidden="true" />
-      <span><strong>{row.label || (row.mode ? t('mode.' + row.mode) : t(names[row.kind]))}</strong>
+      <span><strong>{row.label || (row.area ? areaName(row.area) : row.mode ? t('mode.' + row.mode) : t(names[row.kind]))}</strong>
+        {context && <small>{context}</small>}
         <small>{formatter.format(row.start)}{row.end > row.start ? ' – ' + formatter.format(row.end) : ''}
           {row.clipped && ' · ' + t('clippedEvent')}</small>
         {distance && (distance.kind === 'recorded' || distance.kind === 'estimated') && <small>

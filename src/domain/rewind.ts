@@ -6,6 +6,7 @@ import { knownMeters, modeTime } from './exploration'
 import type { Exploration, ModeTime } from './exploration'
 import type { Mode, Summary } from './model'
 import type { PlaceCatalog } from './places'
+import type { Area } from './geography'
 import { clip, dayWindow } from './primitives'
 import type { Window } from './primitives'
 import { activityDistance } from './summary'
@@ -14,7 +15,7 @@ export type RewindChapter = 'coverage' | 'distance' | 'movement' | 'places' | 'h
 
 export type RewindReport = {
   period: Days; window?: Days; expectedDays: number; includedDays: number; partial: boolean;
-  summary?: Summary; modes: ModeTime[]; places: { name?: string; count: number }[];
+  summary?: Summary; modes: ModeTime[]; places: { name?: string; count: number; area?: Area }[];
   busiest?: { day: string; movementMs: number };
   longest?: { day: string; meters: number; mode: Mode };
   compare?: { dates: Days; change: number; meters: number; currentDays: number; previousDays: number };
@@ -44,7 +45,7 @@ export function rewind(
   const events = archive.events(window)
   const modes = modeTime(events, window)
   const places = catalog.list({ search: '', locale: 'en-US', page: 0, sort: 'visits', window }).rows.slice(0, 3)
-    .map(({ name, count }) => ({ name, count }))
+    .map(({ name, count, area }) => ({ name, count, area }))
   let busiest: RewindReport['busiest']
   for (const cell of archive.calendar(day, view, zone, window)) {
     if (cell.movementMs !== null && cell.movementMs > (busiest?.movementMs ?? 0)) {

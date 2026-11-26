@@ -7,7 +7,7 @@ export default [
   { ignores: ['dist/**', 'test-results/**', 'playwright-report/**', 'coverage/**', '.local/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { files: ['**/*.mjs', '*.config.ts', 'scripts/**/*.ts', 'e2e/**/*.ts'], languageOptions: { globals: globals.node } },
+  { files: ['**/*.mjs', 'config/**/*.ts', 'scripts/**/*.ts', 'e2e/**/*.ts'], languageOptions: { globals: globals.node } },
   {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: { globals: { ...globals.browser, ...globals.worker } },

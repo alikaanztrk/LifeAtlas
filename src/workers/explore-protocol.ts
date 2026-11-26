@@ -12,9 +12,10 @@ import type { PlaceCatalog, PlaceSort, PlaceSummary } from '../domain/places'
 import type { tripsView } from '../domain/trips'
 import type { Replay } from '../domain/replay'
 import type { RewindReport } from '../domain/rewind'
+import type { AreaSummary } from '../domain/geography'
 
 type Base = { zone: string; range: DateRange }
-export type RankedPlace = Pick<PlaceSummary, 'key' | 'target' | 'name' | 'count'>
+export type RankedPlace = Pick<PlaceSummary, 'key' | 'target' | 'name' | 'count' | 'area'>
 export type ExploreQuery = Base & (
   { kind: 'overview' } | { kind: 'calendar'; day: string; view: CalendarView } |
   { kind: 'day'; day: string } | { kind: 'map'; day?: string; mode?: Mode; selected?: string; replay?: boolean } |
@@ -24,7 +25,8 @@ export type ExploreQuery = Base & (
 )
 
 export type ExploreResult =
-  | { kind: 'overview'; value: ReturnType<Exploration['overview']>; map: MapData; calendar: ReturnType<Exploration['calendar']> }
+  | { kind: 'overview'; value: ReturnType<Exploration['overview']>; map: MapData; calendar: ReturnType<Exploration['calendar']>;
+      areas?: AreaSummary; places: RankedPlace[] }
   | { kind: 'calendar'; value: ReturnType<Exploration['calendar']> }
   | { kind: 'day'; value: ReturnType<Exploration['day']>; map: MapData }
   | { kind: 'map'; value: MapData; replay?: Replay }

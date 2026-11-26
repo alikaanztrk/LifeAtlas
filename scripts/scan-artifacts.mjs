@@ -12,8 +12,9 @@ function paths(directory) {
 }
 
 const publicFiles = new Set(['public/atlas-mark.svg', 'public/atlas-192.png', 'public/atlas-512.png', 'public/lifeatlas.webmanifest'])
-const distContent = /^dist\/(?:index\.html|atlas-mark\.svg|atlas-(?:192|512)\.png|lifeatlas\.webmanifest|service-worker\.js|\.nojekyll|third-party-licenses\.md|(?:lifeatlas-license|worker-licenses)\.txt|assets\/[a-zA-Z0-9_.-]+\.(?:js|css))$/
+const distContent = /^dist\/(?:index\.html|atlas-mark\.svg|atlas-(?:192|512)\.png|lifeatlas\.webmanifest|service-worker\.js|\.nojekyll|third-party-licenses\.md|(?:lifeatlas-license|worker-licenses|geography-notices)\.txt|assets\/(?:[a-zA-Z0-9_.-]+\.(?:js|css)|atlas-(?:countries|settlements)-[\w-]+\.mapdata))$/
 const approvedJson = /^(?:package(?:-lock)?\.json|tsconfig\.json|src\/fixtures\/synthetic-[a-z-]+\.json)$/
+const publicMarkdown = new Set(['README.md', 'docs/THIRD_PARTY_NOTICES.md'])
 const sensitive = /(?:^|\/)(?:\.local|private|exports|downloads|screenshots)(?:\/|$)|(?:takeout|timeline|location[ _-]?history|records)[^/]*\.(?:json|csv|zip)$|\.(?:zip|gpx|kml|kmz|geojson|log)$/i
 
 if (!existsSync('dist')) throw new Error('Build the application before scanning')
@@ -22,8 +23,12 @@ const output = paths('dist')
 const artifactFailures = output.filter((entry) => !distContent.test(entry)).length
 const indexed = existsSync('.git') ? execFileSync('git', ['ls-files', '--cached', '-z'], { encoding: 'utf8' })
   .split('\0').filter(Boolean) : []
-const indexFailures = indexed.filter((entry) => !approvedJson.test(entry) &&
-  (entry.toLowerCase().endsWith('.json') || sensitive.test(entry))).length
+const indexFailures = indexed.filter((entry) => {
+  if (sensitive.test(entry)) return true
+  const lower = entry.toLowerCase()
+  if (lower.endsWith('.md')) return !publicMarkdown.has(entry)
+  return lower.endsWith('.json') && !approvedJson.test(entry)
+}).length
 
 if (publicFailures || artifactFailures || indexFailures) {
   throw new Error('Unexpected paths. public: ' + publicFailures + ', dist: ' + artifactFailures + ', Git index: ' + indexFailures)

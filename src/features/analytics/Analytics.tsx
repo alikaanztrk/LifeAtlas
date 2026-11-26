@@ -5,6 +5,7 @@ import type { Days } from '../../domain/edits'
 import { knownMeters, semanticVisits } from '../../domain/exploration'
 import type { PeriodMetrics } from '../../domain/analytics'
 import { formatDistance, locale, number, printDays, t, timeDuration } from '../../locales/i18n'
+import { placeTitle } from '../../locales/geography'
 import type { ExploreResult, RankedPlace } from '../../workers/explore-protocol'
 
 type Value = NonNullable<Extract<ExploreResult, { kind: 'analytics' }>['value']>
@@ -137,7 +138,7 @@ export function Analytics({ value, baseline, onCompare, zone, ready, places, onP
           <h2>{t('topLocalPlaces')}</h2>
           {places.length ? <dl className="fact-list">
             {places.map((place) => <div key={place.key}><dt><button className="button link-button" onClick={() => onPlace(place.target)}>
-              {place.name || t('unnamedPlace')}</button></dt><dd>{t(place.count === 1 ? 'onePlaceVisit' : 'placeVisitsCount',
+              {placeTitle(place.name, place.area)}</button></dt><dd>{t(place.count === 1 ? 'onePlaceVisit' : 'placeVisitsCount',
               { count: number(place.count) })}</dd></div>)}
           </dl> : <p className="muted">{t('noPlaces')}</p>}
         </section>

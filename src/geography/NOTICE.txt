@@ -1,0 +1,17 @@
+LifeAtlas offline geography
+
+Natural Earth. Admin 0 Countries, 1:50m, from the v5.1.2 vector repository.
+Public domain. Polygon coordinates were rounded and properties were reduced
+to country and territory identifiers. The outlines reflect the source's
+default cartographic viewpoint.
+https://github.com/nvkelso/natural-earth-vector/tree/v5.1.2
+https://www.naturalearthdata.com/about/terms-of-use/
+Input SHA-256: 3e458fc036ad0a66411f2c1e6cac49c5d7bfb81cb1123bc513b22511a2b7fdeb
+
+GeoNames (https://www.geonames.org/), cities5000 extract dated 26 November 2026.
+Licensed under Creative Commons Attribution 4.0 International.
+LifeAtlas selected active settlement categories, removed unused attributes,
+rounded coordinates, and used matching published Turkish spelling variants.
+https://download.geonames.org/export/dump/
+https://creativecommons.org/licenses/by/4.0/
+Unpacked input SHA-256: 2f112b2dfe79f32dd0b19ed3c9d4ae2e79c0add90a09c646e39653c07c781912
