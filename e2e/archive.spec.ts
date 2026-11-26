@@ -222,6 +222,7 @@ test('drag and drop follows the same preview flow', async ({ page }) => {
 test('keyboard navigation, light and dark contrast, Turkish and responsive layout', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('./')
+  await expect(page.getByRole('heading', { name: 'Your life, mapped.' })).toBeVisible()
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
   await page.keyboard.press('Enter')
