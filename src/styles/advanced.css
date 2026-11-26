@@ -1,0 +1,64 @@
+.advanced-layout {
+  display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr); gap: 16px; align-items: start;
+}
+.advanced-stack { display: grid; min-width: 0; gap: 16px; }
+.advanced-controls { margin-top: 12px; }
+.table-wrap { overflow: auto; max-width: 100%; }
+.archive-table { border-spacing: 0; width: 100%; margin-top: 10px; font-size: .85rem; }
+.archive-table th, .archive-table td {
+  padding: 9px 7px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; white-space: nowrap;
+}
+.archive-table thead th { color: var(--muted); font-size: .78rem; font-weight: 650; }
+.archive-table tbody th { font-weight: 650; white-space: normal; min-width: 105px; }
+.archive-table tbody td { font-variant-numeric: tabular-nums; }
+.archive-table small, .trip-row small { display: block; color: var(--muted); font-weight: 500; font-size: .77rem; }
+.archive-table .link-button { justify-content: flex-start; text-align: left; padding: 3px; min-height: 30px; overflow-wrap: anywhere; }
+.selected-record { background: var(--accent-tint); }
+.advanced-edit { display: grid; gap: 14px; margin-block: 14px; }
+.edit-form, .details-fields form { display: grid; gap: 8px; }
+.edit-form label, .inline-fields label { display: grid; gap: 4px; min-width: 0; font-size: .85rem; font-weight: 650; }
+.edit-form input, .edit-form select {
+  min-width: 0; width: 100%; min-height: 38px; border: 1px solid var(--strong-border); background: var(--surface);
+  color: var(--text); border-radius: 8px; padding: 7px 9px; font: inherit; font-weight: 450;
+}
+.edit-form .muted, .place-details > .muted, .trip-detail > .muted { font-size: .82rem; }
+.edit-form > .button { justify-self: start; }
+.edit-form h3, .edit-form h2, .trip-form .button-row { margin-top: 4px; }
+.advanced-edit .edit-form + .edit-form { padding-top: 13px; border-top: 1px solid var(--border); }
+.place-details .map-panel + h3 { margin-top: 14px; }
+.inline-fields { display: flex; flex-wrap: wrap; gap: 8px; }
+.inline-fields label { flex: 1 1 116px; }
+.advanced-records { list-style: none; padding: 0; margin: 9px 0 0; }
+.advanced-records li { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;
+  padding: 6px 3px; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.advanced-records .button.secondary { min-height: 32px; padding-block: 5px; }
+.trip-row { text-align: left; justify-content: flex-start; }
+.trip-row svg { color: var(--accent); }
+.details-fields { border: 1px solid var(--border); border-radius: 8px; padding: 8px 9px; }
+.details-fields summary { color: var(--accent); font-weight: 670; cursor: pointer; }
+.details-fields form { margin-block: 7px; }
+.suggestion-controls { margin-top: 10px; }
+.suggestion-controls input { max-width: 80px; }
+.suggestion-list .muted { font-size: .82rem; }
+.compare-form { margin-top: 12px; }
+.compare-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-block: 12px; }
+.compare-periods > div { border: 1px solid var(--border); border-radius: 9px; padding: 9px 12px; background: var(--raised); }
+.compare-periods p { margin-top: 3px; font-size: .86rem; }
+.compare-periods small, .clock-note { color: var(--muted); font-size: .8rem; }
+.histogram { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 5px; }
+.histogram li { display: grid; grid-template-columns: 48px 1fr minmax(63px, auto); align-items: center; gap: 8px; font-size: .8rem; }
+.histogram strong { text-align: right; font-weight: 620; }
+.histogram meter { width: 100%; height: 11px; }
+.share-value { display: inline-flex; align-items: center; gap: 5px; }
+.share-value meter { width: 31px; height: 9px; }
+.histogram meter::-webkit-meter-bar, .share-value meter::-webkit-meter-bar { background: var(--raised); border: 0; border-radius: 6px; }
+.histogram meter::-webkit-meter-optimum-value, .share-value meter::-webkit-meter-optimum-value { background: var(--accent); border-radius: 6px; }
+@media (max-width: 1080px) {
+  .advanced-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .archive-table th, .archive-table td { padding: 6px 4px; font-size: .76rem; }
+  .archive-table .link-button { font-size: .78rem; }
+  .compare-periods > div { padding: 7px; }
+  .compare-periods p { font-size: .8rem; }
+}

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'none'; script-src 'self'; worker-src 'self'; style-src 'self' %VITE_DEV_STYLE%; font-src 'self'; img-src 'self' data:; manifest-src 'self'; connect-src 'self' https://tiles.openfreemap.org/planet https://tiles.openfreemap.org/planet/" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="description" content="Explore your personal location history locally with LifeAtlas." />
+    <meta name="theme-color" content="#0c4845" />
+    <link rel="icon" href="%BASE_URL%atlas-mark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="%BASE_URL%lifeatlas.webmanifest" />
+    <title>LifeAtlas — Your life, mapped.</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

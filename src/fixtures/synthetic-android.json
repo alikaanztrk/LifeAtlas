@@ -1,0 +1,20 @@
+{
+  "semanticSegments": [
+    {
+      "startTime": "2025-02-02T15:00:00+03:00",
+      "endTime": "2025-02-02T16:30:00+03:00",
+      "visit": { "topCandidate": { "placeId": "synthetic-harbor", "name": "Paper Harbor", "placeLocation": { "latLng": "geo:-44.01,-141.20" }, "probability": "0.8" } }
+    },
+    {
+      "startTime": "2025-02-02T16:30:00+03:00",
+      "endTime": "2025-02-02T17:00:00+03:00",
+      "activity": { "start": { "latLng": "geo:-44.01,-141.20" }, "end": { "latLng": "geo:-44.01,-141.18" }, "distanceMeters": 2450, "topCandidate": { "type": "CYCLING" } },
+      "timelinePath": [
+        { "point": "geo:-44.01,-141.20", "durationMinutesOffsetFromStartTime": "0" },
+        { "point": "geo:-44.01,-141.18", "durationMinutesOffsetFromStartTime": "30" }
+      ]
+    }
+  ],
+  "rawSignals": [],
+  "userLocationProfile": {}
+}

@@ -1,0 +1,9 @@
+{
+  "semanticSegments": [
+    { "startTime": "2025-08-03T10:00:00Z", "endTime": "2025-08-03T10:30:00Z", "visit": { "topCandidate": { "placeId": "synthetic-partial", "placeLocation": "geo:999,-141.2" } } },
+    { "startTime": "2025-08-03T10:30:00", "endTime": "2025-08-03T11:00:00Z", "visit": {} },
+    { "startTime": "2025-08-03T10:30:00Z", "endTime": "2025-08-03T11:00:00Z", "activity": { "topCandidate": { "type": "FUTURE_SYNTHETIC_TRANSPORT" }, "distanceMeters": -1 } },
+    { "unsupportedPart": {} },
+    null
+  ]
+}

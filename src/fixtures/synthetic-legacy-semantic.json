@@ -1,0 +1,20 @@
+{
+  "timelineObjects": [
+    {
+      "placeVisit": {
+        "duration": { "startTimestamp": "2024-02-29T23:30:00Z", "endTimestamp": "2024-03-01T00:30:00Z" },
+        "location": { "latitudeE7": -480000000, "longitudeE7": -1420100000, "placeId": "synthetic-station", "name": "Paper Station" }
+      }
+    },
+    {
+      "activitySegment": {
+        "duration": { "startTimestampMs": "1709253000000", "endTimestampMs": "1709254800000" },
+        "startLocation": { "latitudeE7": -480000000, "longitudeE7": -1420100000 },
+        "endLocation": { "latitudeE7": -480000000, "longitudeE7": -1420100000 },
+        "activityType": "IN_TRAIN",
+        "distance": 0,
+        "waypointPath": { "waypoints": [{ "latE7": -480000000, "lngE7": -1420100000 }, { "latE7": -480000100, "lngE7": -1420100100 }] }
+      }
+    }
+  ]
+}

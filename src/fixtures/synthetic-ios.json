@@ -1,0 +1,16 @@
+[
+  {
+    "startTime": "2025-03-09T01:30:00-05:00",
+    "endTime": "2025-03-09T03:30:00-04:00",
+    "visit": { "topCandidate": { "placeID": "synthetic-meridian", "placeLocation": "-38.0°, 179.995°", "name": "Paper Meridian" } }
+  },
+  {
+    "startTime": "2025-03-09T03:30:00-04:00",
+    "endTime": "2025-03-09T03:50:00-04:00",
+    "activity": { "start": "-38.0°, 179.995°", "end": "-38.0°, -179.995°", "topCandidate": { "type": "on bicycle" } },
+    "timelinePath": [
+      { "time": "2025-03-09T03:30:00-04:00", "point": "-38.0°, 179.995°" },
+      { "time": "2025-03-09T03:50:00-04:00", "point": "-38.0°, -179.995°" }
+    ]
+  }
+]
